@@ -1,59 +1,291 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Transformers — Presentation</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header><h1>Transformers</h1></header>
-  <main class="slides">
-    <section class="slide" data-title="Intro">
-      <h2>Transformers: Overview</h2>
-      <p>Self-attention, encoder/decoder blocks, and scalable training.</p>
+
+  <!-- Progress bar -->
+  <div class="progress-bar" id="progress"></div>
+
+  <!-- Slides -->
+  <div class="slides-wrapper">
+
+    <!-- Slide 1: Title -->
+    <section class="slide title-slide active" data-title="Title">
+      <div class="slide-label">Neural Network Architecture</div>
+      <h1>Transformers</h1>
+      <p>Attention is all you need — self-attention, encoder-decoder blocks, and the foundation of modern LLMs.</p>
+      <div class="title-meta">
+        <span class="tag">Deep Learning</span>
+        <span>2026</span>
+        <span>8 slides</span>
+      </div>
     </section>
-    <section class="slide" data-title="Attention">
-      <h2>Self-Attention</h2>
-      <p>Compute attention weights between tokens to produce contextual representations.</p>
-      <button id="show-sources">Sources</button>
+
+    <!-- Slide 2: Embeddings -->
+    <section class="slide" data-title="Embeddings">
+      <div class="slide-label">Section 1 — Tokenization</div>
+      <h2>Embeddings: Turning Words into Numbers</h2>
+      <div class="two-col">
+        <div>
+          <ul class="bullet-list">
+            <li><strong>Token</strong> — a discrete unit of text: word, subword (<code>@@</code>), or character.</li>
+            <li><strong>Embedding table</strong> — a learned matrix <code>E ∈ ℝ<sup>V×d</sup></code> where <code>V</code> = vocab size, <code>d</code> = embedding dimension.</li>
+            <li><strong>Positional encoding</strong> — adds position signal via sin/cos functions or learned offsets so the model knows token order.</li>
+            <li>Output: a sequence of dense vectors that capture semantic and syntactic meaning.</li>
+          </ul>
+        </div>
+        <div class="diagram">
+          <div class="diagram-row">
+            <div class="diagram-label">Input</div>
+            <div class="diagram-box">"the cat sat down"</div>
+          </div>
+          <div class="diagram-row">
+            <div class="diagram-label">Tokenize</div>
+            <div class="diagram-box">the | _cat | _sat | _down</div>
+          </div>
+          <div class="diagram-row">
+            <div class="diagram-label">Embed</div>
+            <div class="diagram-box highlight">E × indices → d-dim vectors</div>
+          </div>
+          <div class="diagram-row">
+            <div class="diagram-label">+ Pos enc</div>
+            <div class="diagram-box">sin/cos or learned</div>
+          </div>
+        </div>
+      </div>
     </section>
-    <section class="slide" data-title="Architecture">
-      <h2>Architecture</h2>
-      <ul>
-        <li>Multi-head attention</li>
-        <li>Feed-forward layers</li>
-        <li>Layer norm & residual connections</li>
-      </ul>
-      <button id="show-notes">Speaker notes</button>
+
+    <!-- Slide 3: Self-Attention -->
+    <section class="slide" data-title="Self-Attention">
+      <div class="slide-label">Section 2 — Core Mechanism</div>
+      <h2>Self-Attention: Context Through Queries &amp; Keys</h2>
+      <div class="two-col">
+        <div>
+          <ul class="bullet-list">
+            <li>Every token emits a <strong>query</strong> (what am I looking for?) and receives <strong>keys</strong> (what do I contain?) from all other tokens.</li>
+            <li>Attention score: <code>score(q, k) = q · k / √d<sub>k</sub></code></li>
+            <li>Softmax over all scores yields a weighted sum of <strong>values</strong> (<code>v</code>) — the attended output.</li>
+            <li>All in parallel: matrix operations <code>Q = XW<sub>Q</sub>,  K = XW<sub>K</sub>,  V = XW<sub>V</sub></code></li>
+          </ul>
+          <div class="callout">
+            Scaled dot-product prevents vanishing gradients in high-dimensional projections.
+          </div>
+        </div>
+        <div class="diagram">
+          <div class="diagram-row">
+            <div class="diagram-label">Q · K<sup>T</sup></div>
+            <div class="diagram-box">Attention scores</div>
+          </div>
+          <div class="diagram-row">
+            <div class="diagram-label">softmax</div>
+            <div class="diagram-box highlight">Probability distribution</div>
+          </div>
+          <div class="diagram-row">
+            <div class="diagram-label">× V</div>
+            <div class="diagram-box">Weighted context vectors</div>
+          </div>
+          <div style="text-align:center;margin-top:14px;font-size:11px;font-family:var(--font-mono);color:var(--text-dim)">
+            Output = softmax(QK<sup>T</sup>/√d) · V
+          </div>
+        </div>
+      </div>
     </section>
+
+    <!-- Slide 4: Multi-Head Attention -->
+    <section class="slide" data-title="Multi-Head Attention">
+      <div class="slide-label">Section 3 — Parallel Attention</div>
+      <h2>Multi-Head Attention</h2>
+      <p>Run multiple attention heads in parallel, each with its own <code>W<sub>Q</sub>, W<sub>K</sub>, W<sub>V</sub></code> — then concatenate and project.</p>
+      <div class="content-grid triple" style="margin-top:28px">
+        <div class="content-card">
+          <div class="card-num">01</div>
+          <h3>Split into h heads</h3>
+          <p>Each head operates on a reduced dimension <code>d<sub>h</sub> = d / h</code>, keeping total compute manageable.</p>
+        </div>
+        <div class="content-card">
+          <div class="card-num">02</div>
+          <h3>Attend in parallel</h3>
+          <p>Heads independently compute attention, capturing different relational patterns — syntax, coreference, semantics.</p>
+        </div>
+        <div class="content-card">
+          <div class="card-num">03</div>
+          <h3>Concat &amp; project</h3>
+          <p><code>Output = W<sup>O</sup> · concat(head<sub>1</sub>, …, head<sub>h</sub>)</code> — linear projection back to <code>d</code>.</p>
+        </div>
+      </div>
+      <div class="callout" style="margin-top:24px">
+        Different heads learn different attention patterns — some focus on local context, others on distant dependencies.
+      </div>
+    </section>
+
+    <!-- Slide 5: Feed-Forward & Residuals -->
+    <section class="slide" data-title="FFN & Residuals">
+      <div class="slide-label">Section 4 — Per-Layer Components</div>
+      <h2>Feed-Forward &amp; Residual Connections</h2>
+      <div class="two-col">
+        <div>
+          <ul class="bullet-list">
+            <li><strong>FFN</strong> — two linear layers with <code>GELU</code> activation: <code>FFN(x) = GELU(xW<sub>1</sub>)W<sub>2</sub></code>. Applies non-linearity to each token independently.</li>
+            <li><strong>Residual connection</strong>: <code>x ← x + Sublayer(x)</code> — enables gradient flow and trains deep networks reliably.</li>
+            <li><strong>LayerNorm</strong>: <code>y = (x − μ) / √(σ² + ε) ⊙ γ + β</code> — stabilizes training by normalizing activations per token.</li>
+          </ul>
+        </div>
+        <div class="diagram">
+          <div style="font-size:11px;font-family:var(--font-mono);color:var(--text-dim);margin-bottom:12px">Per Transformer Block:</div>
+          <div class="diagram-row">
+            <div class="diagram-label">Input x</div>
+            <div class="diagram-box">d-dimensional</div>
+          </div>
+          <div class="diagram-row">
+            <div class="diagram-label">+ Sublayer</div>
+            <div class="diagram-box highlight">Multi-Head Attention or FFN</div>
+          </div>
+          <div class="diagram-row">
+            <div class="diagram-label">LayerNorm</div>
+            <div class="diagram-box">normalize(x + sublayer)</div>
+          </div>
+          <div class="diagram-row">
+            <div class="diagram-label">× Skip</div>
+            <div class="diagram-box">residual added above</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 6: Encoder-Decoder -->
+    <section class="slide" data-title="Encoder-Decoder">
+      <div class="slide-label">Section 5 — Architecture</div>
+      <h2>Encoder-Decoder Architecture</h2>
+      <div class="two-col">
+        <div>
+          <ul class="bullet-list">
+            <li><strong>Encoder</strong> — N identical layers. Each has <strong>Multi-Head Self-Attention</strong> + FFN with residual &amp; LayerNorm. Sees the full input sequence.</li>
+            <li><strong>Decoder</strong> — N identical layers. Each has <strong>Masked</strong> Self-Attention (can't see future) + Encoder-Decoder Cross-Attention + FFN.</li>
+            <li><strong>Cross-attention</strong>: queries come from decoder; keys &amp; values come from encoder output — aligns decoding to source representation.</li>
+          </ul>
+          <div class="callout" style="margin-top:16px">
+            The original Transformer: 6 encoder layers, 6 decoder layers, <code>d<sub>model</sub>=512</code>.
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="content-card">
+            <div class="card-num">ENCODER</div>
+            <h3>Input embedding → Pos enc</h3>
+            <p style="font-size:13px;color:var(--text-dim);margin-top:6px">
+              ↓<br>
+              [×N] Self-Attn → FFN → +Skip → Norm<br>
+              ↓<br>
+              Context vectors (K, V) for decoder
+            </p>
+          </div>
+          <div class="content-card">
+            <div class="card-num">DECODER</div>
+            <h3>Target tokens → Pos enc</h3>
+            <p style="font-size:13px;color:var(--text-dim);margin-top:6px">
+              ↓<br>
+              [×N] Masked Attn → Cross-Attn (↕ encoder) → FFN<br>
+              ↓<br>
+              Linear → Softmax → next token
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 7: Training & Scaling -->
+    <section class="slide" data-title="Training">
+      <div class="slide-label">Section 6 — Training</div>
+      <h2>Training &amp; Scaling</h2>
+      <div class="content-grid" style="margin-top:16px">
+        <div class="content-card">
+          <div class="card-num">01 — Objective</div>
+          <h3>Causal Language Modeling</h3>
+          <p>Predict the next token given the prefix. Minimize cross-entropy loss over the training corpus. Teacher forcing during training.</p>
+        </div>
+        <div class="content-card">
+          <div class="card-num">02 — Optimization</div>
+          <h3>AdamW + Warmup</h3>
+          <p>AdamW with weight decay (decouples L2 from momentum). Learning rate warmup for <code>warmup_steps</code> then inverse-square-root decay.</p>
+        </div>
+        <div class="content-card">
+          <div class="card-num">03 — Scaling</div>
+          <h3>Power Law Scaling</h3>
+          <p>Loss ∝ N<sup>−0.07</sup> · C<sup>−0.076</sup> · D<sup>−0.057</sup> (Kaplan et al.). Bigger models + more data + more compute = better performance.</p>
+        </div>
+        <div class="content-card">
+          <div class="card-num">04 — Key Insight</div>
+          <h3>More Compute Wins</h3>
+          <p>GPT-3 (175B params), PaLM (540B), Llama 3 (405B). The transformer architecture scales predictably with compute budget.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 8: Summary -->
     <section class="slide" data-title="Summary">
+      <div class="slide-label">Wrap-up</div>
       <h2>Summary</h2>
-      <p>Transformers enabled large-scale language models via attention and scaling.</p>
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="s-num">01</div>
+          <h3>Embeddings + Positional Encoding</h3>
+          <p>Tokens become dense vectors; position is encoded so order matters.</p>
+        </div>
+        <div class="summary-card">
+          <div class="s-num">02</div>
+          <h3>Scaled Dot-Product Attention</h3>
+          <p>Query-key-value projections compute contextual representations in parallel.</p>
+        </div>
+        <div class="summary-card">
+          <div class="s-num">03</div>
+          <h3>Multi-Head Attention</h3>
+          <p>Multiple heads capture different relationship types simultaneously.</p>
+        </div>
+        <div class="summary-card">
+          <div class="s-num">04</div>
+          <h3>FFN + Residuals + LayerNorm</h3>
+          <p>Each block is residualized; normalization stabilizes deep networks.</p>
+        </div>
+        <div class="summary-card">
+          <div class="s-num">05</div>
+          <h3>Encoder-Decoder</h3>
+          <p>Encoder builds context; decoder attends to it autoregressively.</p>
+        </div>
+        <div class="summary-card">
+          <div class="s-num">06</div>
+          <h3>Scaling Laws</h3>
+          <p>Performance improves predictably with model size, data, and compute.</p>
+        </div>
+      </div>
+      <div class="callout" style="margin-top:24px">
+        Reference: <strong>Vaswani et al., "Attention Is All You Need"</strong>, NeurIPS 2017.
+      </div>
     </section>
-  </main>
-  <nav class="controls">
-    <button id="prev">◀ Prev</button>
-    <span id="counter"></span>
-    <button id="next">Next ▶</button>
+
+  </div>
+
+  <!-- Lower-left nav -->
+  <nav class="nav-panel" id="nav-panel" aria-label="Slide navigation">
+    <button class="nav-btn" id="prev" title="Previous (←)" aria-label="Previous slide">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+      </svg>
+    </button>
+    <button class="nav-btn" id="next" title="Next (→)" aria-label="Next slide">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+      </svg>
+    </button>
   </nav>
 
-  <aside id="overlay-sources" class="overlay hidden">
-    <div class="panel">
-      <h3>Sources</h3>
-      <ul>
-        <li>Vaswani et al., Attention is All You Need (2017)</li>
-      </ul>
-      <button class="close">Close</button>
-    </div>
-  </aside>
-
-  <aside id="overlay-notes" class="overlay hidden">
-    <div class="panel">
-      <h3>Speaker notes</h3>
-      <p>Explain attention heads, show visualizations, and link to papers.</p>
-      <button class="close">Close</button>
-    </div>
-  </aside>
+  <!-- Slide counter -->
+  <div class="counter" id="counter" aria-live="polite"></div>
 
   <script src="script.js"></script>
 </body>
