@@ -28,35 +28,35 @@
       </div>
     </section>
 
-    <!-- Slide 2: Embeddings -->
+    <!-- Slide 2: Embeddings (interactive) -->
     <section class="slide" data-title="Embeddings">
       <div class="slide-label">Section 1 — Tokenization</div>
-      <h2>Embeddings: Turning Words into Numbers</h2>
-      <div class="two-col">
-        <div>
+      <h2>Embeddings: Words in a Geometric World</h2>
+      <div class="embed-layout">
+        <!-- Left: content -->
+        <div class="embed-left">
           <ul class="bullet-list">
-            <li><strong>Token</strong> — a discrete unit of text: word, subword (<code>@@</code>), or character.</li>
-            <li><strong>Embedding table</strong> — a learned matrix <code>E ∈ ℝ<sup>V×d</sup></code> where <code>V</code> = vocab size, <code>d</code> = embedding dimension.</li>
-            <li><strong>Positional encoding</strong> — adds position signal via sin/cos functions or learned offsets so the model knows token order.</li>
-            <li>Output: a sequence of dense vectors that capture semantic and syntactic meaning.</li>
+            <li>A <strong>word embedding</strong> maps each token to a dense vector in ℝ<sup>d</sup> — capturing meaning through geometry.</li>
+            <li>Similar words land <strong>near each other</strong>. "Cat" and "dog" cluster; "run" and "swim" cluster.</li>
+            <li><strong>Vector arithmetic</strong> captures relationships: <code>king − man + woman ≈ queen</code></li>
+            <li><strong>Positional encoding</strong> adds absolute position via sin/cos functions — the model knows <em>where</em> each token is.</li>
           </ul>
+          <div class="callout">
+            Hover over any dot in the map — you'll see its nearest neighbors in embedding space.
+          </div>
+          <div class="vec-arith">
+            <div class="vec-label">Try it: click any dot to reveal its nearest neighbors</div>
+          </div>
         </div>
-        <div class="diagram">
-          <div class="diagram-row">
-            <div class="diagram-label">Input</div>
-            <div class="diagram-box">"the cat sat down"</div>
+        <!-- Right: interactive 2D embedding map -->
+        <div class="embed-right">
+          <div class="emap-header">
+            <span class="emap-title">2D Embedding Space</span>
+            <span class="emap-sub">trained representation, projected to 2D</span>
           </div>
-          <div class="diagram-row">
-            <div class="diagram-label">Tokenize</div>
-            <div class="diagram-box">the | _cat | _sat | _down</div>
-          </div>
-          <div class="diagram-row">
-            <div class="diagram-label">Embed</div>
-            <div class="diagram-box highlight">E × indices → d-dim vectors</div>
-          </div>
-          <div class="diagram-row">
-            <div class="diagram-label">+ Pos enc</div>
-            <div class="diagram-box">sin/cos or learned</div>
+          <div class="emap-container" id="emap">
+            <canvas id="emap-canvas"></canvas>
+            <div class="emap-tooltip" id="emap-tooltip"></div>
           </div>
         </div>
       </div>
@@ -270,7 +270,7 @@
 
   </div>
 
-  <!-- Lower-left nav -->
+  <!-- Lower-RIGHT nav -->
   <nav class="nav-panel" id="nav-panel" aria-label="Slide navigation">
     <button class="nav-btn" id="prev" title="Previous (←)" aria-label="Previous slide">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
