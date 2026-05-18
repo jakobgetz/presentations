@@ -81,17 +81,20 @@
 
     function resize() {
       const rect = canvas.parentElement.getBoundingClientRect();
-      W = canvas.width  = rect.width  * devicePixelRatio;
-      H = canvas.height = rect.height * devicePixelRatio;
-      canvas.style.width  = rect.width  + 'px';
-      canvas.style.height = rect.height + 'px';
-      ctx.scale(devicePixelRatio, devicePixelRatio);
+      // Use CSS pixel dimensions for both the attribute and the drawing surface
+      const cssW = Math.round(rect.width);
+      const cssH = Math.round(rect.height);
+      W = canvas.width  = cssW;
+      H = canvas.height = cssH;
+      canvas.style.width  = cssW + 'px';
+      canvas.style.height = cssH + 'px';
       recompute();
     }
 
     function recompute() {
-      const rw = canvas.width  / devicePixelRatio;
-      const rh = canvas.height / devicePixelRatio;
+      // canvas.width/height are already in CSS pixels (no DPR scaling)
+      const rw = W;
+      const rh = H;
       const pad = 36;
       const ax = (rw - 2 * pad) / 2;
       const ay = (rh - 2 * pad) / 2;
@@ -109,8 +112,8 @@
     }
 
     function draw(now) {
-      const rw = canvas.width  / devicePixelRatio;
-      const rh = canvas.height / devicePixelRatio;
+      const rw = W;
+      const rh = H;
       ctx.clearRect(0, 0, rw, rh);
 
       // Background grid
