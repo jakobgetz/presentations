@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Transformers — Presentation</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header><h1>Transformers</h1></header>
+  <main class="slides">
+    <section class="slide" data-title="Intro">
+      <h2>Transformers: Overview</h2>
+      <p>Self-attention, encoder/decoder blocks, and scalable training.</p>
+    </section>
+    <section class="slide" data-title="Attention">
+      <h2>Self-Attention</h2>
+      <p>Compute attention weights between tokens to produce contextual representations.</p>
+      <button id="show-sources">Sources</button>
+    </section>
+    <section class="slide" data-title="Architecture">
+      <h2>Architecture</h2>
+      <ul>
+        <li>Multi-head attention</li>
+        <li>Feed-forward layers</li>
+        <li>Layer norm & residual connections</li>
+      </ul>
+      <button id="show-notes">Speaker notes</button>
+    </section>
+    <section class="slide" data-title="Summary">
+      <h2>Summary</h2>
+      <p>Transformers enabled large-scale language models via attention and scaling.</p>
+    </section>
+  </main>
+  <nav class="controls">
+    <button id="prev">◀ Prev</button>
+    <span id="counter"></span>
+    <button id="next">Next ▶</button>
+  </nav>
+
+  <aside id="overlay-sources" class="overlay hidden">
+    <div class="panel">
+      <h3>Sources</h3>
+      <ul>
+        <li>Vaswani et al., Attention is All You Need (2017)</li>
+        <li>Related tutorials and blog posts</li>
+      </ul>
+      <button class="close">Close</button>
+    </div>
+  </aside>
+
+  <aside id="overlay-notes" class="overlay hidden">
+    <div class="panel">
+      <h3>Speaker notes</h3>
+      <p>Explain attention heads, show visualizations, and link to papers.</p>
+      <button class="close">Close</button>
+    </div>
+  </aside>
+
+  <script src="script.js"></script>
+</body>
+</html>
