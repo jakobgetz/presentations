@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Presentations</title>
+<style>
+body{font-family:Inter,system-ui,Arial;margin:0;background:#0f172a;color:#e6eef8}
+.container{max-width:1000px;margin:40px auto;padding:24px}
+.header{display:flex;align-items:center;justify-content:space-between}
+.header h1{margin:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:24px}
+.card{background:#071032;padding:16px;border-radius:10px;border:1px solid rgba(255,255,255,0.04)}
+.card a{color:#60a5fa;text-decoration:none;font-weight:600}
+.card p{color:#9aa7c7;margin:8px 0 0;font-size:14px}
+.pagination{margin-top:20px;text-align:center}
+.button{background:#0b1220;color:#fff;padding:8px 12px;border-radius:6px;border:none}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Presentations</h1>
+    <div>Hosted from /presentations/&nbsp; — add a folder with index.html</div>
+  </div>
+  <div id="grid" class="grid"></div>
+  <div class="pagination" id="pagination"></div>
+</div>
+<script>
+const presentations = $presentations_json;
+const perPage = 8; let page = 1;
+function render(){ const grid = document.getElementById('grid'); grid.innerHTML=''; const start=(page-1)*perPage; const items = presentations.slice(start,start+perPage); items.forEach(p=>{ const card = document.createElement('div'); card.className='card'; const a = document.createElement('a'); a.href = 'presentations/' + p + '/'; a.textContent = p; const desc = document.createElement('p'); desc.textContent = 'Click to open presentation'; card.appendChild(a); card.appendChild(desc); grid.appendChild(card); }); const pagination = document.getElementById('pagination'); pagination.innerHTML=''; const total = Math.max(1, Math.ceil(presentations.length/perPage)); for(let i=1;i<=total;i++){ const b = document.createElement('button'); b.className='button'; b.textContent = i; if(i===page) b.disabled=true; b.addEventListener('click',(()=>{ const ii=i; return ()=>{ page=ii; render(); } })()); pagination.appendChild(b); }
+}
+render();
+</script>
+</body>
+</html>
