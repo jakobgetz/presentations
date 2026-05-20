@@ -102,6 +102,7 @@ html, body {
   flex-direction: column;
   justify-content: center;
   padding: 60px 80px;
+  overflow: hidden;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.4s ease;
@@ -397,17 +398,14 @@ html, body {
   gap: 36px;
   align-items: start;
   margin-top: 16px;
-  height: calc(100vh - 220px);
-  min-height: 340px;
+  /* Let content determine height */
+  height: auto;
 }
 
 .embed-left {
   display: flex;
   flex-direction: column;
-  gap: 0;
 }
-
-.embed-left .bullet-list { flex: 1; }
 
 .vec-arith {
   margin-top: 14px;
@@ -428,14 +426,15 @@ html, body {
 .embed-right {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  gap: 10px;
+  /* height driven by emap-container's explicit height below */
+  min-width: 0;
 }
 
 .emap-header {
   display: flex;
   align-items: baseline;
   gap: 10px;
+  flex-shrink: 0;
 }
 
 .emap-title {
@@ -454,13 +453,16 @@ html, body {
 }
 
 .emap-container {
-  flex: 1;
+  /* Explicit fixed-ish height so the canvas can size itself */
+  height: 280px;
+  width: 100%;
   position: relative;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
   cursor: crosshair;
+  flex-shrink: 0;
 }
 
 #emap-canvas {
